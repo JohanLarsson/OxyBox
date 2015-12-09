@@ -1,0 +1,74 @@
+﻿<Window x:Class="OxyBox.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:OxyBox"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        Title="MainWindow"
+        Width="525"
+        Height="350"
+        mc:Ignorable="d">
+    <Window.DataContext>
+        <local:MainVm />
+    </Window.DataContext>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <oxy:Plot x:Name="Plot" Title="So foggy">
+            <oxy:Plot.Axes>
+                <oxy:LinearAxis Position="Left" />
+                <oxy:LinearAxis Position="Bottom" />
+            </oxy:Plot.Axes>
+            <oxy:Plot.Series>
+                <oxy:LineSeries x:Name="Data1Line"
+                                Title="Data1"
+                                ItemsSource="{Binding Line1}"
+                                Visibility="{Binding IsChecked,
+                                                     ElementName=ShowData1Button,
+                                                     Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Color="OrangeRed" />
+                <oxy:LineSeries x:Name="Data2Line"
+                                Title="Data2"
+                                ItemsSource="{Binding Line2}"
+                                Visibility="{Binding IsChecked,
+                                                     ElementName=ShowData2Button,
+                                                     Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Color="Blue" />
+            </oxy:Plot.Series>
+        </oxy:Plot>
+
+        <StackPanel Grid.Row="1"
+                    Margin="42,0,0,0"
+                    HorizontalAlignment="Left"
+                    IsManipulationEnabled="False"
+                    Orientation="Horizontal">
+
+            <ToggleButton x:Name="ShowData1Button"
+                          Content="Data1"
+                          IsChecked="True"
+                          Visibility="{Binding ElementName=Data1Line,
+                                               Path=HasItems,
+                                               Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <ToggleButton x:Name="ShowData2Button"
+                          Content="Data2"
+                          IsChecked="True"
+                          IsEnabled="{Binding HasItems,
+                                              ElementName=Data2Line}"
+                          Visibility="{Binding ElementName=Data2Line,
+                                               Path=HasItems,
+                                               Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+        </StackPanel>
+        <Button Grid.Row="1"
+                HorizontalAlignment="Right"
+                Command="{x:Static oxy:PlotCommands.ResetAxes}"
+                CommandTarget="{Binding ElementName=Plot}"
+                Content="Reset" />
+    </Grid>
+</Window>
